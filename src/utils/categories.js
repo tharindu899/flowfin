@@ -1,30 +1,28 @@
 // src/utils/categories.js
-// Central list of categories with Lucide icon names for income and expense.
 
 export const INCOME_CATEGORIES = [
-  { label: 'Salary',      icon: 'Briefcase'     },
-  { label: 'Freelance',   icon: 'Laptop'        },
-  { label: 'Investment',  icon: 'TrendingUp'    },
-  { label: 'Gift',        icon: 'Gift'          },
-  { label: 'Refund',      icon: 'RotateCcw'     },
-  { label: 'Other',       icon: 'PlusCircle'    },
+  { label: 'Salary',      icon: 'Briefcase'  },
+  { label: 'Freelance',   icon: 'Laptop'     },
+  { label: 'Investment',  icon: 'TrendingUp' },
+  { label: 'Gift',        icon: 'Gift'       },
+  { label: 'Refund',      icon: 'RotateCcw'  },
+  { label: 'Other',       icon: 'PlusCircle' },
 ];
 
 export const EXPENSE_CATEGORIES = [
-  { label: 'Food',          icon: 'Utensils'      },
-  { label: 'Transport',     icon: 'Car'           },
-  { label: 'Shopping',      icon: 'ShoppingBag'   },
-  { label: 'Bills',         icon: 'FileText'      },
-  { label: 'Entertainment', icon: 'Tv'            },
-  { label: 'Health',        icon: 'Heart'         },
-  { label: 'Education',     icon: 'BookOpen'      },
-  { label: 'Housing',       icon: 'Home'          },
-  { label: 'Other',         icon: 'MoreHorizontal'},
+  { label: 'Food',          icon: 'Utensils'       },
+  { label: 'Transport',     icon: 'Car'            },
+  { label: 'Shopping',      icon: 'ShoppingBag'    },
+  { label: 'Bills',         icon: 'FileText'       },
+  { label: 'Entertainment', icon: 'Tv'             },
+  { label: 'Health',        icon: 'Heart'          },
+  { label: 'Education',     icon: 'BookOpen'       },
+  { label: 'Housing',       icon: 'Home'           },
+  { label: 'Other',         icon: 'MoreHorizontal' },
 ];
 
 export const ALL_CATEGORIES = [...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES];
 
-// Accent colors per category (for icons & badges)
 export const CATEGORY_COLORS = {
   Salary:         '#6c63ff',
   Freelance:      '#6c63ff',
@@ -42,6 +40,16 @@ export const CATEGORY_COLORS = {
   Other:          '#94a3b8',
 };
 
-// Format currency
+// ── LKR currency formatter ─────────────────────────────────────
 export const fmt = (n) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
+  'Rs. ' + Number(n).toLocaleString('si-LK', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+// Short format for charts (Rs. 12,500 → Rs. 12.5k)
+export const fmtShort = (n) => {
+  if (n >= 1_000_000) return 'Rs. ' + (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000)     return 'Rs. ' + (n / 1_000).toFixed(1) + 'k';
+  return 'Rs. ' + Number(n).toFixed(0);
+};

@@ -87,7 +87,7 @@ export default function AddModal({ onAdd, onClose }) {
           {/* Amount + Date */}
           <div className="form-row">
             <div>
-              <label className="form-label">Amount (USD)</label>
+              <label className="form-label">Amount (LKR)</label>
               <input
                 className="form-input"
                 type="number"

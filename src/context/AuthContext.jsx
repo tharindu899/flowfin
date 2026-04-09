@@ -1,12 +1,12 @@
 // src/context/AuthContext.jsx
-// Provides auth state and helpers (signIn, signUp, signOut, Google) to the whole app.
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   updateProfile,
 } from 'firebase/auth';
@@ -19,14 +19,13 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Don't try to subscribe if Firebase didn't init
-    if (firebaseConfigError || !auth) {
-      setLoading(false);
-      return;
-    }
+    if (firebaseConfigError || !auth) { setLoading(false); return; }
 
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    // Handle redirect result from Google sign-in on mobile
+    getRedirectResult(auth).catch(() => {});
+
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
       setLoading(false);
     });
     return unsub;
@@ -41,7 +40,23 @@ export function AuthProvider({ children }) {
   const signIn = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-  const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+  // Google: try popup first, fall back to redirect (works on mobile/Safari)
+  const signInWithGoogle = async () => {
+    try {
+      return await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      // Popup blocked or unsupported → use redirect
+      if (
+        err.code === 'auth/popup-blocked' ||
+        err.code === 'auth/popup-closed-by-user' ||
+        err.code === 'auth/cancelled-popup-request'
+      ) {
+        await signInWithRedirect(auth, googleProvider);
+        return; // page will reload; redirect result handled in useEffect
+      }
+      throw err;
+    }
+  };
 
   const logOut = () => signOut(auth);
 

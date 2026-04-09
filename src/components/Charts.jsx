@@ -8,6 +8,7 @@ import {
 } from 'chart.js';
 import { Bar, Pie } from 'react-chartjs-2';
 import { BarChart2, PieChart } from 'lucide-react';
+import { fmtShort } from '../utils/categories';
 
 // Register Chart.js modules once
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
@@ -58,7 +59,7 @@ export default function Charts({ monthlyData, categoryData }) {
         borderColor:     '#252a38',
         borderWidth:     1,
         callbacks: {
-          label: (ctx) => ` $${ctx.parsed.y.toLocaleString()}`,
+          label: (ctx) => ' ' + fmtShort(ctx.parsed.y),
         },
       },
     },
@@ -71,7 +72,7 @@ export default function Charts({ monthlyData, categoryData }) {
         grid:  { color: gridColor },
         ticks: {
           color: textColor, font,
-          callback: (v) => '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v),
+          callback: (v) => fmtShort(v),
         },
       },
     },
@@ -109,7 +110,7 @@ export default function Charts({ monthlyData, categoryData }) {
           label: (ctx) => {
             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
             const pct   = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
-            return ` $${ctx.parsed.toLocaleString()} (${pct}%)`;
+            return ' Rs. ' + ctx.parsed.toLocaleString() + ' (' + pct + '%)';
           },
         },
       },
