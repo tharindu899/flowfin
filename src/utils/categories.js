@@ -40,16 +40,31 @@ export const CATEGORY_COLORS = {
   Other:          '#94a3b8',
 };
 
-// ── LKR currency formatter ─────────────────────────────────────
-export const fmt = (n) =>
-  'Rs. ' + Number(n).toLocaleString('si-LK', {
+// ── Compact number formatter (1000 → 1k, 10000 → 10k, 1M → 1M) ──
+export const fmt = (n) => {
+  const num = Math.abs(Number(n));
+  const sign = Number(n) < 0 ? '-' : '';
+  if (num >= 1_000_000) {
+    const v = (num / 1_000_000);
+    return sign + 'Rs. ' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + 'M';
+  }
+  if (num >= 1_000) {
+    const v = (num / 1_000);
+    return sign + 'Rs. ' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + 'k';
+  }
+  return sign + 'Rs. ' + num.toFixed(2);
+};
+
+// Full precision for modals/detail views
+export const fmtFull = (n) =>
+  'Rs. ' + Number(n).toLocaleString('en-LK', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
-// Short format for charts (Rs. 12,500 → Rs. 12.5k)
+// Short format for chart axis labels
 export const fmtShort = (n) => {
-  if (n >= 1_000_000) return 'Rs. ' + (n / 1_000_000).toFixed(1) + 'M';
-  if (n >= 1_000)     return 'Rs. ' + (n / 1_000).toFixed(1) + 'k';
-  return 'Rs. ' + Number(n).toFixed(0);
+  if (n >= 1_000_000) return 'Rs.' + (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000)     return 'Rs.' + (n / 1_000).toFixed(1) + 'k';
+  return 'Rs.' + Number(n).toFixed(0);
 };

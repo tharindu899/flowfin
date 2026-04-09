@@ -10,12 +10,17 @@ import {
 import { useAuth } from '../context/AuthContext';
 
 const NAV_ITEMS = [
-  { id: 'home',      Icon: LayoutDashboard, label: 'Dashboard'   },
-  { id: 'analytics', Icon: BarChart2,        label: 'Analytics'   },
+  { id: 'home',      Icon: LayoutDashboard, label: 'Dashboard'    },
+  { id: 'analytics', Icon: BarChart2,        label: 'Analytics'    },
   { id: 'history',   Icon: ArrowLeftRight,   label: 'Transactions' },
-  { id: 'calendar',  Icon: CalendarDays,     label: 'Calendar'    },
-  { id: 'profile',   Icon: UserCircle,       label: 'Profile'     },
+  { id: 'calendar',  Icon: CalendarDays,     label: 'Calendar'     },
+  { id: 'profile',   Icon: UserCircle,       label: 'Profile'      },
 ];
+
+// Mobile bottom nav: home, analytics, [+FAB], history, profile
+// Calendar accessible only via sidebar on desktop
+const MOBILE_LEFT  = [NAV_ITEMS[0], NAV_ITEMS[1]];
+const MOBILE_RIGHT = [NAV_ITEMS[2], NAV_ITEMS[4]];
 
 export default function Layout({ children, activeTab, setActiveTab, onAddClick, pageTitle }) {
   const { user, logOut } = useAuth();
@@ -80,10 +85,14 @@ export default function Layout({ children, activeTab, setActiveTab, onAddClick, 
           <div className="topbar-left">
             <div>
               <div className="page-title">
-                {pageTitle || `${greeting()}, ${user?.displayName?.split(" ")[0] || "there"}`}
+                {pageTitle === 'Dashboard'
+                  ? `${greeting()}, ${user?.displayName?.split(' ')[0] || 'there'}`
+                  : pageTitle}
               </div>
               <div className="page-subtitle">
-                {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+                })}
               </div>
             </div>
           </div>
@@ -92,8 +101,11 @@ export default function Layout({ children, activeTab, setActiveTab, onAddClick, 
             <button className="btn btn-primary btn-icon" onClick={onAddClick} title="Add transaction">
               <Plus size={18} />
             </button>
-            {/* Theme (mobile-visible) */}
-            <button className="btn btn-ghost btn-icon" onClick={toggleTheme} style={{ display:'none' }}>
+            <button
+              className="btn btn-ghost btn-icon theme-toggle-mobile"
+              onClick={toggleTheme}
+              title="Toggle theme"
+            >
               {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             <div className="avatar" title={user?.email} onClick={logOut}>
@@ -110,7 +122,7 @@ export default function Layout({ children, activeTab, setActiveTab, onAddClick, 
 
       {/* ── Mobile Bottom Nav ──────────────────────────────── */}
       <nav className="bottom-nav">
-        {NAV_ITEMS.slice(0, 2).map(({ id, Icon, label }) => (
+        {MOBILE_LEFT.map(({ id, Icon, label }) => (
           <button
             key={id}
             className={`bottom-nav-btn ${activeTab === id ? 'active' : ''}`}
@@ -126,7 +138,7 @@ export default function Layout({ children, activeTab, setActiveTab, onAddClick, 
           <Plus size={22} />
         </button>
 
-        {NAV_ITEMS.slice(2, 4).map(({ id, Icon, label }) => (
+        {MOBILE_RIGHT.map(({ id, Icon, label }) => (
           <button
             key={id}
             className={`bottom-nav-btn ${activeTab === id ? 'active' : ''}`}

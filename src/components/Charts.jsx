@@ -18,11 +18,17 @@ const PIE_COLORS = [
   '#3b82f6', '#ec4899', '#8b5cf6', '#14b8a6', '#94a3b8',
 ];
 
+// Read CSS variable at call time so it works for both light and dark
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 export default function Charts({ monthlyData, categoryData }) {
-  // ── Shared chart defaults ────────────────────────────────────
-  const font = { family: "'Inter', sans-serif", size: 12 };
-  const gridColor = 'rgba(255,255,255,0.05)';
-  const textColor = '#94a3b8';
+  const textColor  = cssVar('--text-2') || '#94a3b8';
+  const gridColor  = cssVar('--border')  || '#252a38';
+  const cardBg     = cssVar('--card')    || '#1a1e2a';
+  const borderClr  = cssVar('--border')  || '#252a38';
+  const font       = { family: "'Inter', sans-serif", size: 12 };
 
   // ── Bar chart config ─────────────────────────────────────────
   const barData = {
@@ -53,10 +59,10 @@ export default function Charts({ monthlyData, categoryData }) {
         labels: { color: textColor, font, boxWidth: 12, boxHeight: 12 },
       },
       tooltip: {
-        backgroundColor: '#1a1e2a',
-        titleColor:      '#f1f5f9',
-        bodyColor:       '#94a3b8',
-        borderColor:     '#252a38',
+        backgroundColor: cardBg,
+        titleColor:      cssVar('--text-1') || '#f1f5f9',
+        bodyColor:       textColor,
+        borderColor:     borderClr,
         borderWidth:     1,
         callbacks: {
           label: (ctx) => ' ' + fmtShort(ctx.parsed.y),
@@ -65,11 +71,11 @@ export default function Charts({ monthlyData, categoryData }) {
     },
     scales: {
       x: {
-        grid:  { color: gridColor },
+        grid:  { color: gridColor + '40' },
         ticks: { color: textColor, font },
       },
       y: {
-        grid:  { color: gridColor },
+        grid:  { color: gridColor + '40' },
         ticks: {
           color: textColor, font,
           callback: (v) => fmtShort(v),
@@ -86,7 +92,7 @@ export default function Charts({ monthlyData, categoryData }) {
     datasets: [{
       data:            categoryData.data,
       backgroundColor: PIE_COLORS.slice(0, categoryData.labels.length),
-      borderColor:     '#1a1e2a',
+      borderColor:     cardBg,
       borderWidth:     3,
       hoverOffset:     8,
     }],
@@ -101,10 +107,10 @@ export default function Charts({ monthlyData, categoryData }) {
         labels:    { color: textColor, font, padding: 12, boxWidth: 12, boxHeight: 12 },
       },
       tooltip: {
-        backgroundColor: '#1a1e2a',
-        titleColor:      '#f1f5f9',
-        bodyColor:       '#94a3b8',
-        borderColor:     '#252a38',
+        backgroundColor: cardBg,
+        titleColor:      cssVar('--text-1') || '#f1f5f9',
+        bodyColor:       textColor,
+        borderColor:     borderClr,
         borderWidth:     1,
         callbacks: {
           label: (ctx) => {
@@ -145,7 +151,12 @@ export default function Charts({ monthlyData, categoryData }) {
             <Pie data={pieData} options={pieOptions} />
           </div>
         ) : (
-          <div style={{ height:220, display:'flex', alignItems:'center', justifyContent:'center', color:'var(--text-3)', fontSize:13 }}>
+          <div style={{
+            height: 220, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', color: 'var(--text-3)', fontSize: 13,
+            flexDirection: 'column', gap: 8,
+          }}>
+            <PieChart size={32} style={{ opacity: 0.3 }} />
             Add expenses to see breakdown
           </div>
         )}

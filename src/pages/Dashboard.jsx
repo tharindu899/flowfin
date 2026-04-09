@@ -5,13 +5,13 @@ import { useState, useMemo } from 'react';
 import { useAuth }          from '../context/AuthContext';
 import { useTransactions }  from '../hooks/useTransactions';
 import Layout               from '../components/Layout';
-import StatCard              from '../components/StatCard';
+import StatCard             from '../components/StatCard';
 import Charts               from '../components/Charts';
-import TransactionList       from '../components/TransactionList';
-import AddModal              from '../components/AddModal';
-import Analytics             from './Analytics';
-import CalendarView          from './CalendarView';
-import Profile               from './Profile';
+import TransactionList      from '../components/TransactionList';
+import AddModal             from '../components/AddModal';
+import Analytics            from './Analytics';
+import CalendarView         from './CalendarView';
+import Profile              from './Profile';
 import { fmt }              from '../utils/categories';
 
 export default function Dashboard() {
@@ -51,6 +51,10 @@ export default function Dashboard() {
     calendar:  'Calendar',
     profile:   'Profile',
   };
+
+  const savingsRate = totalIncome > 0
+    ? Math.round((balance / totalIncome) * 100)
+    : 0;
 
   const renderContent = () => {
     switch (activeTab) {
@@ -100,15 +104,21 @@ export default function Dashboard() {
       default:
         return (
           <>
-            <div className="stats-grid">
+            {/* Balance — full width accent card */}
+            <div className="stats-grid stats-top">
               <StatCard
                 accent
                 label="Total Balance"
                 value={fmt(balance)}
                 icon="Wallet"
-                change={`${balance >= 0 ? '↑' : '↓'} Savings rate ${totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : 0}%`}
+                change={`Savings rate ${savingsRate}%`}
               />
+            </div>
+
+            {/* Income & Expense — horizontal side by side */}
+            <div className="stats-row">
               <StatCard
+                horizontal
                 label="Total Income"
                 value={fmt(totalIncome)}
                 icon="TrendingUp"
@@ -117,6 +127,7 @@ export default function Dashboard() {
                 change={`${transactions.filter(t => t.type === 'income').length} transactions`}
               />
               <StatCard
+                horizontal
                 label="Total Expenses"
                 value={fmt(totalExpense)}
                 icon="TrendingDown"
