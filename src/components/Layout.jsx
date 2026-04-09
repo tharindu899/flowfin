@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { id: 'profile',   Icon: UserCircle,       label: 'Profile'     },
 ];
 
-export default function Layout({ children, activeTab, setActiveTab, onAddClick }) {
+export default function Layout({ children, activeTab, setActiveTab, onAddClick, pageTitle }) {
   const { user, logOut } = useAuth();
   const [dark, setDark] = useState(true);
 
@@ -80,7 +80,7 @@ export default function Layout({ children, activeTab, setActiveTab, onAddClick }
           <div className="topbar-left">
             <div>
               <div className="page-title">
-                {greeting()}, {user?.displayName?.split(' ')[0] || 'there'} 👋
+                {pageTitle || `${greeting()}, ${user?.displayName?.split(" ")[0] || "there"}`}
               </div>
               <div className="page-subtitle">
                 {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}

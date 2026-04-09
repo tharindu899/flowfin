@@ -26,8 +26,13 @@ export default function AddModal({ onAdd, onClose }) {
     try {
       await onAdd({ description: desc.trim(), amount: +amount, type, category, date });
       onClose();
-    } catch {
-      setError('Failed to save. Please try again.');
+    } catch (err) {
+      console.error('AddModal error:', err);
+      if (err?.code === 'permission-denied' || String(err?.message).includes('permissions')) {
+        setError('Firestore permission denied. Set security rules in Firebase Console → Firestore → Rules.');
+      } else {
+        setError(err?.message || 'Failed to save. Try again.');
+      }
     } finally {
       setLoading(false);
     }

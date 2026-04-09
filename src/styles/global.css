@@ -26,7 +26,7 @@
   --card:          #1a1e2a;
   --card-hover:    #1f2436;
   --border:        #252a38;
-  --border-light:  #1e2336;
+  --border-light:  #1a1e2c;
 
   /* Typography */
   --text-1:        #f1f5f9;
@@ -46,7 +46,7 @@
   --card:         #ffffff;
   --card-hover:   #f8f9fd;
   --border:       #e2e8f0;
-  --border-light: #eef2f7;
+  --border-light: #f1f5f9;
   --text-1:       #0f172a;
   --text-2:       #475569;
   --text-3:       #94a3b8;

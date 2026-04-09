@@ -48,6 +48,11 @@ export default function Auth() {
         'auth/invalid-email':            'Please enter a valid email address.',
         'auth/too-many-requests':        'Too many attempts. Please try again later.',
         'auth/network-request-failed':   'Network error. Check your connection.',
+        'auth/configuration-not-found':  'Firebase Authentication is not enabled. Go to Firebase Console → Authentication → Get started and enable Email/Password sign-in.',
+        'auth/unauthorized-domain':      'This domain is not authorized. Go to Firebase Console → Authentication → Settings → Authorized domains and add your Vercel URL.',
+        'auth/popup-blocked':            'Popup blocked by browser. Please allow popups for this site and try again.',
+        'auth/popup-closed-by-user':     'Sign-in window was closed. Please try again.',
+        'auth/cancelled-popup-request':  'Sign-in was cancelled. Please try again.',
       }[err.code] || err.message;
       setError(msg);
     } finally {
@@ -61,7 +66,14 @@ export default function Auth() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err.message);
+      const msg = {
+        'auth/configuration-not-found': 'Firebase Authentication is not enabled. Go to Firebase Console → Authentication → Get started and enable Google sign-in.',
+        'auth/unauthorized-domain':     'This domain is not authorized. Go to Firebase Console → Authentication → Settings → Authorized domains and add your Vercel URL.',
+        'auth/popup-blocked':           'Popup blocked by browser. Please allow popups for this site.',
+        'auth/popup-closed-by-user':    'Sign-in window was closed. Please try again.',
+        'auth/cancelled-popup-request': 'Sign-in was cancelled. Please try again.',
+      }[err.code] || err.message;
+      setError(msg);
     } finally {
       setLoading(false);
     }
