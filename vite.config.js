@@ -19,18 +19,8 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         icons: [
-          {
-            src: 'icons/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
-          },
-          {
-            src: 'icons/icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
-          }
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
         ]
       },
       workbox: {
@@ -44,5 +34,22 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  build: {
+    // Split large vendors into separate chunks for faster loading
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor':   ['react', 'react-dom'],
+          'firebase-auth':  ['firebase/auth'],
+          'firebase-store': ['firebase/firestore'],
+          'firebase-app':   ['firebase/app'],
+          'chartjs':        ['chart.js', 'react-chartjs-2'],
+          'lucide':         ['lucide-react'],
+          'utils':          ['date-fns'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600,
+  }
 })

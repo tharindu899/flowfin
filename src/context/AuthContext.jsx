@@ -10,7 +10,7 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase/config';
+import { auth, googleProvider, firebaseConfigError } from '../firebase/config';
 
 const AuthContext = createContext(null);
 
@@ -18,8 +18,13 @@ export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Listen for Firebase auth state changes
   useEffect(() => {
+    // Don't try to subscribe if Firebase didn't init
+    if (firebaseConfigError || !auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
@@ -29,9 +34,7 @@ export function AuthProvider({ children }) {
 
   const signUp = async (email, password, displayName) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    if (displayName) {
-      await updateProfile(cred.user, { displayName });
-    }
+    if (displayName) await updateProfile(cred.user, { displayName });
     return cred;
   };
 
